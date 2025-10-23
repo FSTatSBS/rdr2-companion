@@ -3,85 +3,94 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Alley’s RDR2 Companion – Hunt • Craft • Complete</title>
-  <meta name="description" content="Mobile-first Red Dead Redemption 2 companion for Alley: hunting, crafting, completion tracking, pins, and personalized profile with cats. Offline-first using localStorage. Export/Import JSON and Share." />
+  <title>Alley’s RDR2 Companion — Ultimate</title>
+  <meta name="description" content="Second-screen RDR2 companion for Alley: hunting, crafting, challenges, map, pins, personalization. Single-file, offline-first, export/import, share.">
   <style>
     :root {
-      --bg: #0b0f14;
-      --panel: #111827;
-      --muted: #a3b1c6;
-      --text: #e6eefc;
-      --accent: #30a46c; /* default green */
-      --accent-2: #7c3aed;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-      --ok: #22c55e;
-      --card: #0f172a;
-      --border: #203047;
+      --bg: #0a0f16;
+      --panel: #0f172a;
+      --muted: #93a4c2;
+      --text: #e8f0ff;
+      --accent: #22c55e;
+      --accent-2: #a78bfa;
+      --border: #1e2c46;
+      --card: #0b1222;
+      --danger:#ef4444;
     }
-    /* Theme accents – we toggle data-theme on <html> */
     html[data-theme="gold"] { --accent:#d4a72c; --accent-2:#8b5cf6; }
     html[data-theme="rose"] { --accent:#e11d48; --accent-2:#22d3ee; }
     html[data-theme="sky"]  { --accent:#0ea5e9; --accent-2:#f97316; }
 
     * { box-sizing: border-box; }
-    html, body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-    header { position: sticky; top: 0; z-index: 5; backdrop-filter: saturate(150%) blur(6px); background: rgba(11,15,20,0.85); border-bottom: 1px solid var(--border); }
-    header .bar { display: flex; gap: 8px; align-items: center; padding: env(safe-area-inset-top) 12px 12px 12px; }
-    h1 { font-size: 18px; margin: 0; letter-spacing: 0.3px; }
+    html, body { margin: 0; background: var(--bg); color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    header { position: sticky; top: 0; z-index: 5; backdrop-filter: saturate(160%) blur(8px);
+      background: rgba(10,15,22,0.85); border-bottom: 1px solid var(--border); }
+    header .bar { display:flex; align-items:center; gap:8px; padding: env(safe-area-inset-top) 12px 12px; }
+    h1 { font-size: 18px; margin: 0; letter-spacing: .2px; }
     .pill { padding: 6px 10px; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); font-size: 12px; }
-    .tabs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; padding: 6px 12px 10px; }
-    .tab { padding: 8px 10px; text-align: center; border-radius: 12px; background: var(--panel); color: var(--muted); border: 1px solid var(--border); font-size: 12px; }
-    .tab.active { background: linear-gradient(180deg, #1a2336, #0f172a); color: white; border-color: #2a3f66; }
-    main { padding: 10px 12px 90px; }
-    .grid { display: grid; gap: 10px; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 12px; }
-    .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-    .row.right { justify-content: flex-end; }
-    .title { font-weight: 800; font-size: 16px; }
-    .sub { font-size: 12px; color: var(--muted); }
-    .kpi { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .k { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align:center; }
-    .k .v { font-size: 18px; font-weight: 800; }
-    .k .l { font-size: 11px; color: var(--muted); }
-    input, select, button, textarea { font: inherit; color: inherit; }
-    input, select, textarea { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 10px; }
-    button { background: var(--panel); border: 1px solid var(--border); padding: 10px 12px; border-radius: 12px; cursor: pointer; }
-    button.primary { background: linear-gradient(180deg, color-mix(in hsl, var(--accent) 75%, black), color-mix(in hsl, var(--accent) 55%, black)); border-color: var(--accent); color: white; }
-    button.ghost { background: transparent; border-color: var(--border); }
-    button.warn { background: #3a1e11; border-color: #6b2f14; color: #ffb86b; }
-    .list { display: grid; gap: 8px; }
-    .item { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 10px; }
-    .item .hdr { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .tabs { display:grid; grid-template-columns: repeat(7, 1fr); gap:6px; padding:6px 12px 10px; }
+    .tab { padding: 8px 10px; border-radius: 12px; background: var(--panel); border:1px solid var(--border);
+      color: var(--muted); font-size: 12px; text-align:center; }
+    .tab.active { background: linear-gradient(180deg, #18233a, #0f172a); color:#fff; border-color:#2a3f66; }
+    main { padding: 10px 12px 100px; }
+    .grid { display:grid; gap:10px; }
+    .card { background: var(--card); border:1px solid var(--border); border-radius:18px; padding: 12px; }
+    .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .row.right{ justify-content:flex-end; }
+    .title { font-weight:800; font-size:16px; }
+    .sub { font-size:12px; color: var(--muted); }
+    .list { display:grid; gap:8px; }
+    .item { background: var(--panel); border:1px solid var(--border); border-radius:14px; padding:10px; }
+    .item .hdr { display:flex; align-items:center; justify-content:space-between; gap:10px; }
     .badge { font-size: 11px; padding: 4px 8px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
     .tag { font-size: 11px; padding: 4px 8px; border-radius: 999px; background: #0d2231; border: 1px solid #1d3650; }
     .muted { color: var(--muted); }
-    .fab { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 10; }
-    .srch { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
-    .foot { position: fixed; bottom: 0; left: 0; right: 0; backdrop-filter: saturate(150%) blur(6px); background: rgba(11,15,20,0.9); border-top: 1px solid var(--border); padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
-    .foot button { border-radius: 12px; padding: 10px; }
-    .small { font-size: 12px; }
-    .hide { display: none !important; }
-    .progress-ring { width: 86px; height: 86px; border-radius: 50%; background: conic-gradient(var(--accent) var(--p,0%), #22324a 0%); display: grid; place-items: center; font-weight: 800; }
-    .avatar { width: 36px; height: 36px; border-radius: 50%; display:grid; place-items:center; background: color-mix(in hsl, var(--accent) 25%, black); border:1px solid var(--border); }
-    .chip { padding:6px 10px; border-radius:999px; border:1px solid var(--border); background:#0d1a27; color:var(--text); font-size:12px; }
+    input, select, button, textarea { font: inherit; color: inherit; }
+    input, select, textarea { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 10px; }
+    button { background: var(--panel); border: 1px solid var(--border); padding: 10px 12px; border-radius: 12px; cursor: pointer; }
+    button.primary { background: linear-gradient(180deg, color-mix(in hsl, var(--accent) 75%, black), color-mix(in hsl, var(--accent) 55%, black)); border-color: var(--accent); color:#fff; }
+    button.ghost { background: transparent; border-color: var(--border); }
+    button.small { font-size: 12px; padding: 6px 8px; border-radius: 10px; }
+    .kpi { display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; }
+    .k { background: var(--panel); border:1px solid var(--border); border-radius:12px; padding:10px; text-align:center; }
+    .k .v { font-size:18px; font-weight:800; }
+    .k .l { font-size:11px; color:var(--muted); }
+    .foot { position: fixed; bottom: 0; left: 0; right: 0; backdrop-filter: saturate(160%) blur(8px); background: rgba(10,15,22,0.9);
+      border-top:1px solid var(--border); padding:10px 12px calc(10px + env(safe-area-inset-bottom)); display:grid; grid-template-columns: repeat(7, 1fr); gap:6px; }
+    .foot button { border-radius:12px; padding:10px; }
+    .hide { display:none !important; }
+    .progress-ring { width: 90px; height: 90px; border-radius: 50%; background: conic-gradient(var(--accent) var(--p,0%), #22324a 0%); display: grid; place-items: center; font-weight: 800; }
+    .avatar { width:36px; height:36px; border-radius:50%; display:grid; place-items:center; background: color-mix(in hsl, var(--accent) 25%, black); border:1px solid var(--border); }
+    .chip { padding:6px 10px; border-radius:999px; border:1px solid var(--border); background:#0d1a27; color:#fff; font-size:12px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .hr { height:1px; background:var(--border); margin:8px 0; }
+    /* Map */
+    #mapWrap { background: #0b1324; border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+    #map { width:100%; height:300px; background: radial-gradient(60% 60% at 50% 50%, #0d1b33, #0a1324 70%); }
+    svg text { fill: #9eb3d8; font-size: 10px; }
+    .dot { r:6; fill: var(--accent); stroke:#0b1222; stroke-width:2; cursor:pointer; }
+    .dot.dim { opacity:.35; }
   </style>
 </head>
 <body>
   <header>
     <div class="bar">
-      <div class="avatar" title="Alley">🐱</div>
+      <div class="avatar">🐱</div>
       <div class="pill">Alley’s Companion</div>
-      <h1>RDR2 – Hunt • Craft • Complete</h1>
+      <h1>RDR2 — Hunt • Craft • Map • Complete</h1>
       <div style="flex:1"></div>
-      <button id="btnExport" title="Export your data">Export</button>
-      <button id="btnImport" title="Import saved data">Import</button>
-      <button id="btnShare" title="Share" class="ghost">Share</button>
+      <button id="btnExport" title="Export data">Export</button>
+      <button id="btnImport" title="Import data">Import</button>
+      <button id="btnShare" class="ghost">Share</button>
+      <button id="btnReset" class="ghost" title="Reset data">Reset</button>
+      <button id="btnUndo" class="ghost" title="Undo last">Undo</button>
     </div>
     <div class="tabs">
       <div class="tab active" data-tab="home">Home</div>
       <div class="tab" data-tab="hunt">Hunt</div>
       <div class="tab" data-tab="craft">Craft</div>
+      <div class="tab" data-tab="maptab">Map</div>
       <div class="tab" data-tab="challenges">Challenges</div>
       <div class="tab" data-tab="complete">100%</div>
       <div class="tab" data-tab="profile">Profile</div>
@@ -95,7 +104,7 @@
         <div class="row" style="justify-content:space-between">
           <div>
             <div class="title">Tonight's Targets</div>
-            <div class="sub">Pins & smart suggestions for <span id="ownerNameInline">Alley</span></div>
+            <div class="sub">Pins & suggestions for <span id="ownerNameInline">Alley</span></div>
             <div id="pinnedChips" class="row" style="margin-top:6px"></div>
           </div>
           <div class="progress-ring" id="pctComplete">0%</div>
@@ -107,20 +116,21 @@
         <div class="k"><div class="v" id="kPelts">0</div><div class="l">Perfect Pelts</div></div>
         <div class="k"><div class="v" id="kCraft">0</div><div class="l">Crafted Items</div></div>
         <div class="k"><div class="v" id="kCheck">0</div><div class="l">Checklist Done</div></div>
+        <div class="k"><div class="v" id="kPins">0</div><div class="l">Pinned</div></div>
       </div>
 
       <div class="card">
         <div class="row"><div class="title">Quick Log</div></div>
-        <div class="srch" style="margin-top:8px">
-          <input id="logAnimal" placeholder="Animal name (e.g., Whitetail Buck)" />
+        <div class="row" style="gap:8px; margin-top:8px">
+          <input id="logAnimal" placeholder="Animal name (e.g., Whitetail Buck)" style="flex:1" />
           <select id="logQuality">
             <option value="3">Perfect ★★★</option>
             <option value="2">Good ★★</option>
             <option value="1">Poor ★</option>
           </select>
+          <button class="primary" id="btnLogKill">Log</button>
         </div>
         <div class="row right" style="margin-top:8px">
-          <button class="primary" id="btnLogKill">Log Kill</button>
           <button class="ghost" id="btnQuickMat">+ Material</button>
         </div>
       </div>
@@ -129,9 +139,9 @@
     <!-- HUNT -->
     <section id="hunt" class="grid hide">
       <div class="card">
-        <div class="row"><div class="title">Find Animals</div></div>
+        <div class="row"><div class="title">Animal Index</div><span class="sub">Filter by region / time / text</span></div>
         <div class="row" style="gap:8px; margin-top:8px">
-          <input id="qHunt" placeholder="Search animal or family (e.g., pronghorn, deer)" style="flex:1" />
+          <input id="qHunt" placeholder="Search (name or family)" style="flex:1" />
           <select id="fltRegion"></select>
           <select id="fltTime">
             <option value="">Any Time</option>
@@ -146,17 +156,40 @@
     <!-- CRAFT -->
     <section id="craft" class="grid hide">
       <div class="card">
-        <div class="row"><div class="title">Craftable Now</div><span class="sub">Based on your inventory</span></div>
+        <div class="row"><div class="title">Crafting</div><span class="sub">Craftable now appears first</span></div>
       </div>
       <div id="listCraftable" class="list"></div>
       <div class="card"><div class="title">All Recipes</div></div>
       <div id="listRecipes" class="list"></div>
     </section>
 
+    <!-- MAP -->
+    <section id="maptab" class="grid hide">
+      <div class="card" id="mapWrap">
+        <div class="row" style="justify-content:space-between">
+          <div>
+            <div class="title">Hunting Map</div>
+            <div class="sub">Tap markers for perfect-pelt tips</div>
+          </div>
+          <div class="row">
+            <select id="mapFRegion"></select>
+            <select id="mapFTime">
+              <option value="">Any</option>
+              <option value="day">Day</option>
+              <option value="night">Night</option>
+            </select>
+            <input id="mapQ" placeholder="Animal/family" style="width:140px" />
+          </div>
+        </div>
+        <div id="map" class="mono"></div>
+      </div>
+      <div id="mapList" class="list"></div>
+    </section>
+
     <!-- CHALLENGES -->
     <section id="challenges" class="grid hide">
       <div class="card">
-        <div class="row"><div class="title">Challenges</div><span class="sub">Tap to toggle completion</span></div>
+        <div class="row"><div class="title">Challenges</div><span class="sub">Pin favorites • Tap to complete</span></div>
       </div>
       <div id="listChallenges" class="list"></div>
     </section>
@@ -164,7 +197,7 @@
     <!-- 100% -->
     <section id="complete" class="grid hide">
       <div class="card">
-        <div class="row"><div class="title">100% Checklist</div><span class="sub">Track major milestones</span></div>
+        <div class="row"><div class="title">100% Checklist</div><span class="sub">Major milestones</span></div>
       </div>
       <div id="listChecklist" class="list"></div>
     </section>
@@ -174,7 +207,7 @@
       <div class="card">
         <div class="row" style="justify-content:space-between;gap:12px">
           <div class="row" style="gap:10px">
-            <div class="avatar" id="pfp">🐱</div>
+            <div class="avatar">🐱</div>
             <div>
               <div class="title">Profile</div>
               <div class="sub">Make it yours, Alley</div>
@@ -197,14 +230,18 @@
         <div class="row" style="margin-top:8px; gap:8px">
           <label class="sub"><input type="checkbox" id="spoilers"/> Show spoilers</label>
         </div>
+        <div class="row" style="margin-top:8px; gap:8px">
+          <button id="btnBackupToText" class="ghost">Copy backup JSON</button>
+          <button id="btnRestoreFromText" class="ghost">Paste backup JSON</button>
+        </div>
         <div class="row right" style="margin-top:8px">
           <button class="primary" id="saveProfile">Save</button>
         </div>
       </div>
 
       <div class="card">
-        <div class="title">Pinned targets</div>
-        <div class="sub">Your shortlist for tonight</div>
+        <div class="title">Pinned items</div>
+        <div class="sub">Animals • Recipes • Challenges</div>
         <div id="pins" class="row" style="margin-top:8px;gap:6px;flex-wrap:wrap"></div>
         <div class="row right" style="margin-top:8px">
           <button class="ghost" id="clearPins">Clear Pins</button>
@@ -217,236 +254,326 @@
     <button class="tab active" data-tab="home">Home</button>
     <button class="tab" data-tab="hunt">Hunt</button>
     <button class="tab" data-tab="craft">Craft</button>
+    <button class="tab" data-tab="maptab">Map</button>
     <button class="tab" data-tab="challenges">Challenges</button>
     <button class="tab" data-tab="complete">100%</button>
     <button class="tab" data-tab="profile">Profile</button>
   </div>
 
   <script>
-  // ======== Minimal data layer (expandable) ========
-  const DBKEY = 'rdr2_companion_v2_alley';
-  const db = JSON.parse(localStorage.getItem(DBKEY) || 'null') || seed();
-  function save() { localStorage.setItem(DBKEY, JSON.stringify(db)); renderAll(); }
+  // ======== Storage / bootstrap ========
+  const DBKEY = 'rdr2_companion_ultra_alley';
+  let db = JSON.parse(localStorage.getItem(DBKEY) || 'null') || seed();
+  let undoStack = [];
+  function commit() { localStorage.setItem(DBKEY, JSON.stringify(db)); }
+  function save() { commit(); renderAll(); }
 
+  // ======== Seed data (extended) ========
   function seed(){
     const regions = [
       {id:'new_hanover', name:'New Hanover', states:['Heartlands','Grizzlies East']},
       {id:'west_elizabeth', name:'West Elizabeth', states:['Big Valley','Tall Trees']},
       {id:'lemoyne', name:'Lemoyne', states:['Bayou Nwa','Scarlett Meadows']},
-      {id:'ambarino', name:'Ambarino', states:['Grizzlies West','Cotorra Springs']}
-    ];
-
-    const vendors = [
-      {id:'trapper_stdenis', type:'Trapper', name:'Trapper – Saint Denis', regionId:'lemoyne', near:'Market by the docks', lat:0, lng:0},
-      {id:'trapper_bigvalley', type:'Trapper', name:'Trapper – Big Valley', regionId:'west_elizabeth', near:'NW of Riggs Station', lat:0, lng:0},
-      {id:'fence_stdenis', type:'Fence', name:'Fence – Saint Denis', regionId:'lemoyne', near:'Rue de la Commerce', lat:0, lng:0},
-      {id:'pearson_camp', type:'Pearson', name:'Pearson – Camp', regionId:'new_hanover', near:'Camp crafting', lat:0, lng:0}
+      {id:'ambarino', name:'Ambarino', states:['Grizzlies West','Cotorra Springs']},
+      {id:'new_austin', name:'New Austin', states:['Cholla Springs','Rio Bravo','Hennigan’s Stead']}
     ];
 
     const animals = [
-      {id:'whitetail_buck', name:'Whitetail Buck', family:'deer', regionIds:['new_hanover','west_elizabeth'], habitatNotes:'Open woodlands and meadows; dawn/dusk active', activeTimes:['day','night']},
-      {id:'pronghorn', name:'Pronghorn', family:'antelope', regionIds:['new_hanover','west_elizabeth'], habitatNotes:'Heartlands plains; skittish', activeTimes:['day']},
-      {id:'american_bison', name:'American Bison', family:'bison', regionIds:['west_elizabeth'], habitatNotes:'Big Valley grasslands', activeTimes:['day']},
-      {id:'rabbit', name:'Black-tailed Jackrabbit', family:'small_game', regionIds:['lemoyne','new_hanover','west_elizabeth'], habitatNotes:'Everywhere', activeTimes:['day','night']},
-      {id:'bear_grizzly', name:'Grizzly Bear', family:'bear', regionIds:['ambarino','west_elizabeth'], habitatNotes:'Grizzlies; aggressive', activeTimes:['day']}
+      {id:'whitetail_buck', name:'Whitetail Buck', family:'deer', regionIds:['new_hanover','west_elizabeth'], habitatNotes:'Open woodlands, meadows', activeTimes:['day','night']},
+      {id:'whitetail_doe', name:'Whitetail Doe', family:'deer', regionIds:['new_hanover','west_elizabeth'], habitatNotes:'Small herds; skittish', activeTimes:['day','night']},
+      {id:'pronghorn', name:'Pronghorn', family:'antelope', regionIds:['new_hanover','west_elizabeth','new_austin'], habitatNotes:'Heartlands & Cholla', activeTimes:['day']},
+      {id:'american_bison', name:'American Bison', family:'bison', regionIds:['west_elizabeth','new_hanover'], habitatNotes:'Big Valley grasslands', activeTimes:['day']},
+      {id:'elk', name:'Rocky Mountain Elk', family:'elk', regionIds:['ambarino','west_elizabeth'], habitatNotes:'Grizzlies forests', activeTimes:['day','night']},
+      {id:'moose', name:'Western Moose', family:'moose', regionIds:['ambarino','new_hanover'], habitatNotes:'Lakes & marsh edges', activeTimes:['day']},
+      {id:'bighorn', name:'Desert Bighorn Sheep', family:'sheep', regionIds:['new_austin','west_elizabeth'], habitatNotes:'Rocky slopes', activeTimes:['day']},
+      {id:'wolf', name:'Gray Wolf', family:'wolf', regionIds:['ambarino','west_elizabeth'], habitatNotes:'Packs; howls at dusk', activeTimes:['night','day']},
+      {id:'cougar', name:'Cougar', family:'cougar', regionIds:['west_elizabeth','new_austin'], habitatNotes:'Solitary ambusher', activeTimes:['night']},
+      {id:'bear_grizzly', name:'Grizzly Bear', family:'bear', regionIds:['ambarino','west_elizabeth'], habitatNotes:'Aggressive', activeTimes:['day']},
+      {id:'black_bear', name:'American Black Bear', family:'bear', regionIds:['west_elizabeth','new_hanover'], habitatNotes:'Forested hills', activeTimes:['day']},
+      {id:'fox', name:'American Red Fox', family:'fox', regionIds:['new_hanover','west_elizabeth','lemoyne'], habitatNotes:'Fields & edges', activeTimes:['night','day']},
+      {id:'coyote', name:'North American Coyote', family:'coyote', regionIds:['new_austin','new_hanover','west_elizabeth'], habitatNotes:'Common; yips', activeTimes:['night','day']},
+      {id:'beaver', name:'North American Beaver', family:'beaver', regionIds:['west_elizabeth','ambarino','new_hanover'], habitatNotes:'Rivers & ponds', activeTimes:['day']},
+      {id:'badger', name:'American Badger', family:'badger', regionIds:['west_elizabeth','new_austin'], habitatNotes:'Open country burrows', activeTimes:['day','night']},
+      {id:'boar', name:'Wild Boar', family:'boar', regionIds:['lemoyne','new_hanover'], habitatNotes:'Swamps & thickets', activeTimes:['night','day']},
+      {id:'raccoon', name:'Raccoon', family:'raccoon', regionIds:['lemoyne','new_hanover','west_elizabeth'], habitatNotes:'Nocturnal scavenger', activeTimes:['night']},
+      {id:'opossum', name:'Virginia Opossum', family:'opossum', regionIds:['lemoyne','new_hanover'], habitatNotes:'Plays dead', activeTimes:['night']},
+      {id:'muskrat', name:'Common Muskrat', family:'muskrat', regionIds:['lemoyne','new_hanover'], habitatNotes:'Waterways', activeTimes:['day','night']},
+      {id:'rabbit', name:'Black-tailed Jackrabbit', family:'small_game', regionIds:['lemoyne','new_hanover','west_elizabeth','new_austin'], habitatNotes:'Everywhere', activeTimes:['day','night']},
+      {id:'squirrel', name:'Gray Squirrel', family:'small_game', regionIds:['new_hanover','west_elizabeth','lemoyne'], habitatNotes:'Trees; skittish', activeTimes:['day']},
+      {id:'turkey', name:'Eastern Wild Turkey', family:'bird', regionIds:['new_hanover','west_elizabeth','lemoyne'], habitatNotes:'Forest floors', activeTimes:['day']},
+      {id:'duck_mallard', name:'Mallard Duck', family:'bird', regionIds:['new_hanover','lemoyne'], habitatNotes:'Ponds & shorelines', activeTimes:['day']},
+      {id:'goose', name:'Canada Goose', family:'bird', regionIds:['new_hanover','west_elizabeth'], habitatNotes:'Lakes & fields', activeTimes:['day']},
+      {id:'heron', name:'Great Blue Heron', family:'bird', regionIds:['lemoyne'], habitatNotes:'Bayou shallows', activeTimes:['day']},
+      {id:'egret', name:'Little Egret', family:'bird', regionIds:['lemoyne'], habitatNotes:'Bayou plume bird', activeTimes:['day']},
+      {id:'oriole', name:'Baltimore Oriole', family:'bird', regionIds:['lemoyne','new_hanover'], habitatNotes:'Perches; small target', activeTimes:['day']},
+      {id:'alligator', name:'American Alligator', family:'alligator', regionIds:['lemoyne'], habitatNotes:'Bayou marshes', activeTimes:['night','day']},
+      {id:'iguana', name:'Green Iguana', family:'reptile', regionIds:['new_austin'], habitatNotes:'Islands & rocks', activeTimes:['day']},
+      {id:'snake', name:'Western Rattlesnake', family:'reptile', regionIds:['new_austin'], habitatNotes:'Arid scrub', activeTimes:['day','night']}
     ];
 
     const huntRules = [
-      {animalId:'whitetail_buck', perfectPelt:3, weapon:'Bolt Action Rifle', ammo:'Express', shots:'1x head or heart', notes:'Use cover scent; approach from downwind'},
-      {animalId:'pronghorn', perfectPelt:3, weapon:'Varmint Rifle', ammo:'Regular', shots:'1x headshot', notes:'Keep distance; prone in grass'},
-      {animalId:'american_bison', perfectPelt:3, weapon:'Springfield/Bolt Action', ammo:'Express', shots:'1x head', notes:'Aim for brain; use Dead Eye'},
-      {animalId:'rabbit', perfectPelt:3, weapon:'Varmint Rifle', ammo:'Regular', shots:'1x head', notes:'Small game arrows also work'},
-      {animalId:'bear_grizzly', perfectPelt:3, weapon:'Bolt Action Rifle', ammo:'Express', shots:'1x head', notes:'Bring potent tonics; bait optional'}
-    ];
-
-    const legendary = [
-      {id:'legendary_bharati_bear', name:'Legendary Bharati Grizzly', regionId:'ambarino', clueCount:3, peltOutputs:['Legendary Bear Pelt'], trinkets:['Bear Claw Talisman'], time:['day'], weather:['clear']}
+      {animalId:'whitetail_buck', weapon:'Bolt Action Rifle', ammo:'Express', shots:'1× head/heart'},
+      {animalId:'whitetail_doe', weapon:'Bolt Action Rifle', ammo:'Express', shots:'1× head/heart'},
+      {animalId:'pronghorn', weapon:'Varmint Rifle', ammo:'Regular', shots:'1× head'},
+      {animalId:'american_bison', weapon:'Springfield/Bolt', ammo:'Express', shots:'1× head'},
+      {animalId:'elk', weapon:'Bolt Action Rifle', ammo:'Express', shots:'1× head/heart'},
+      {animalId:'moose', weapon:'Bolt Action Rifle', ammo:'Express', shots:'1× head'},
+      {animalId:'bighorn', weapon:'Bolt Action Rifle', ammo:'Express', shots:'1× head'},
+      {animalId:'wolf', weapon:'Bolt Action Rifle', ammo:'Express', shots:'1× head'},
+      {animalId:'cougar', weapon:'Bolt Action Rifle', ammo:'Express', shots:'1× head'},
+      {animalId:'bear_grizzly', weapon:'Bolt Action Rifle', ammo:'Express', shots:'1× head'},
+      {animalId:'black_bear', weapon:'Bolt Action Rifle', ammo:'Express', shots:'1× head'},
+      {animalId:'fox', weapon:'Varmint Rifle', ammo:'Regular', shots:'1× head'},
+      {animalId:'coyote', weapon:'Varmint Rifle', ammo:'Regular', shots:'1× head'},
+      {animalId:'beaver', weapon:'Varmint Rifle', ammo:'Regular', shots:'1× head'},
+      {animalId:'badger', weapon:'Varmint Rifle', ammo:'Regular', shots:'1× head'},
+      {animalId:'boar', weapon:'Bow', ammo:'Improved Arrow', shots:'1× head'},
+      {animalId:'raccoon', weapon:'Varmint Rifle', ammo:'Regular', shots:'1× head'},
+      {animalId:'opossum', weapon:'Varmint Rifle', ammo:'Regular', shots:'1× head'},
+      {animalId:'muskrat', weapon:'Varmint Rifle', ammo:'Regular', shots:'1× head'},
+      {animalId:'rabbit', weapon:'Varmint Rifle', ammo:'Regular', shots:'1× head'},
+      {animalId:'squirrel', weapon:'Varmint Rifle', ammo:'Regular', shots:'1× head'},
+      {animalId:'turkey', weapon:'Varmint Rifle', ammo:'Regular', shots:'1× head'},
+      {animalId:'duck_mallard', weapon:'Varmint Rifle', ammo:'Regular', shots:'1× head'},
+      {animalId:'goose', weapon:'Varmint Rifle', ammo:'Regular', shots:'1× head'},
+      {animalId:'heron', weapon:'Varmint Rifle', ammo:'Regular', shots:'1× head'},
+      {animalId:'egret', weapon:'Varmint Rifle', ammo:'Regular', shots:'1× head'},
+      {animalId:'oriole', weapon:'Varmint Rifle', ammo:'Regular', shots:'1× head'},
+      {animalId:'alligator', weapon:'Rolling Block', ammo:'Express', shots:'1× brain'},
+      {animalId:'iguana', weapon:'Varmint Rifle', ammo:'Regular', shots:'1× head'},
+      {animalId:'snake', weapon:'Varmint Rifle', ammo:'Regular', shots:'1× head'}
     ];
 
     const recipes = [
-      {id:'trapper_bear_hat', name:'Grizzly Mountain Hat', station:'Trapper', vendorType:'Trapper', inputs:[{item:'Legendary Bear Pelt', qty:1}], outputs:[{item:'Grizzly Mountain Hat', qty:1}], notes:'Craft at any Trapper'},
+      {id:'trapper_bear_hat', name:'Grizzly Mountain Hat', station:'Trapper', vendorType:'Trapper', inputs:[{item:'Legendary Bear Pelt', qty:1}], outputs:[{item:'Grizzly Mountain Hat', qty:1}]},
+      {id:'trapper_bison_coat', name:'Bison Coat', station:'Trapper', vendorType:'Trapper', inputs:[{item:'Perfect Bison Pelt', qty:2}], outputs:[{item:'Bison Coat', qty:1}]},
+      {id:'trapper_deer_gloves', name:'Deerskin Gloves', station:'Trapper', vendorType:'Trapper', inputs:[{item:'Perfect Deer Pelt', qty:1}], outputs:[{item:'Deerskin Gloves', qty:1}]},
+      {id:'trapper_elk_gloves', name:'Elk Range Gloves', station:'Trapper', vendorType:'Trapper', inputs:[{item:'Perfect Elk Pelt', qty:1}], outputs:[{item:'Elk Range Gloves', qty:1}]},
+      {id:'trapper_moose_coat', name:'Moose Hunting Coat', station:'Trapper', vendorType:'Trapper', inputs:[{item:'Perfect Moose Pelt', qty:1}], outputs:[{item:'Moose Hunting Coat', qty:1}]},
+      {id:'trapper_cougar_coat', name:'Cougar Cutaway Coat', station:'Trapper', vendorType:'Trapper', inputs:[{item:'Perfect Cougar Pelt', qty:1}], outputs:[{item:'Cougar Cutaway Coat', qty:1}]},
+      {id:'trapper_fox_gloves', name:'Fox Range Gloves', station:'Trapper', vendorType:'Trapper', inputs:[{item:'Perfect Fox Pelt', qty:1}], outputs:[{item:'Fox Range Gloves', qty:1}]},
+      {id:'trapper_beaver_hat', name:'Beaver Flop Hat', station:'Trapper', vendorType:'Trapper', inputs:[{item:'Perfect Beaver Pelt', qty:1}], outputs:[{item:'Beaver Flop Hat', qty:1}]},
+      {id:'fence_trinket_bear', name:'Bear Claw Talisman', station:'Fence', vendorType:'Fence', inputs:[{item:'Legendary Bear Claw', qty:1},{item:'Silver Chain Bracelet', qty:1},{item:'Quartz Chunk', qty:1}], outputs:[{item:'Bear Claw Talisman', qty:1}]},
+      {id:'fence_trinket_buck', name:'Buck Antler Trinket', station:'Fence', vendorType:'Fence', inputs:[{item:'Legendary Buck Antler', qty:1},{item:'Abalone Shell Fragment', qty:1}], outputs:[{item:'Buck Antler Trinket', qty:1}]},
+      {id:'fence_trinket_fox', name:'Fox Claw Trinket', station:'Fence', vendorType:'Fence', inputs:[{item:'Legendary Fox Claw', qty:1},{item:'Silver Earring', qty:1}], outputs:[{item:'Fox Claw Trinket', qty:1}]},
+      {id:'fence_talisman_boar', name:'Boar Tusk Talisman', station:'Fence', vendorType:'Fence', inputs:[{item:'Legendary Boar Tusk', qty:1},{item:'Gold Earring', qty:1},{item:'Cobalt Petrified Wood', qty:1}], outputs:[{item:'Boar Tusk Talisman', qty:1}]},
+      {id:'fence_talisman_gator', name:'Alligator Tooth Talisman', station:'Fence', vendorType:'Fence', inputs:[{item:'Legendary Alligator Tooth', qty:1},{item:'Vintage Civil War Handcuffs', qty:1},{item:'Braxton Amethyst Necklace', qty:1}], outputs:[{item:'Alligator Tooth Talisman', qty:1}]},
       {id:'pearson_satchel_kit', name:'Arthur Full Satchel Kit', station:'Camp', vendorType:'Pearson', inputs:[{item:'Perfect Deer Pelt', qty:3},{item:'Perfect Bison Pelt', qty:1},{item:'Perfect Pronghorn Hide', qty:1}], outputs:[{item:'Legend of the East Satchel (part)', qty:1}], requires:['Upgrade Leather Working Tools']},
-      {id:'fence_trinket_bear', name:'Bear Claw Talisman', station:'Fence', vendorType:'Fence', inputs:[{item:'Legendary Bear Claw', qty:1},{item:'Silver Chain Bracelet', qty:1},{item:'Quartz Chunk', qty:1}], outputs:[{item:'Bear Claw Talisman', qty:1}], notes:'Permanent stamina core drain reduction'}
+      {id:'satchel_tonics', name:'Tonics Satchel', station:'Camp', vendorType:'Pearson', inputs:[{item:'Perfect Deer Pelt', qty:1},{item:'Perfect Elk Pelt', qty:1},{item:'Perfect Beaver Pelt', qty:1}], outputs:[{item:'Tonics Satchel', qty:1}], requires:['Leather Working Tools']},
+      {id:'satchel_materials', name:'Materials Satchel', station:'Camp', vendorType:'Pearson', inputs:[{item:'Perfect Deer Pelt', qty:1},{item:'Perfect Boar Pelt', qty:1},{item:'Perfect Iguana Skin', qty:1}], outputs:[{item:'Materials Satchel', qty:1}], requires:['Leather Working Tools']}
     ];
 
     const challenges = [
-      {id:'survivalist_1', category:'Survivalist', tier:1, description:'Catch 3 Bluegill', requirements:['3x Bluegill caught']},
-      {id:'master_hunter_1', category:'Master Hunter', tier:1, description:'Skin 3 deer', requirements:['3x Deer skinned']},
-      {id:'sharpshooter_1', category:'Sharpshooter', tier:1, description:'Kill 3 flying birds', requirements:['3x birds shot mid-flight']}
+      {id:'survivalist_1', category:'Survivalist', tier:1, description:'Catch 3 Bluegill', requirements:['3× Bluegill caught']},
+      {id:'survivalist_2', category:'Survivalist', tier:2, description:'Craft 5 items at a campfire', requirements:['5× crafted at campfire']},
+      {id:'master_hunter_1', category:'Master Hunter', tier:1, description:'Skin 3 deer', requirements:['3× Deer skinned']},
+      {id:'master_hunter_2', category:'Master Hunter', tier:2, description:'Collect 3 perfect pelts from coyotes or foxes', requirements:['3× Perfect small predator pelts']},
+      {id:'sharpshooter_1', category:'Sharpshooter', tier:1, description:'Kill 3 flying birds', requirements:['3× birds shot mid-flight']},
+      {id:'sharpshooter_2', category:'Sharpshooter', tier:2, description:'Kill 2 animals from a moving train', requirements:['2× animals from train']}
     ];
 
     const checklist = [
       {id:'cl_legendary_bear', kind:'collectible', label:'Legendary Bharati Bear – Hunted', regionId:'ambarino'},
       {id:'cl_bear_trinket', kind:'trinket', label:'Bear Claw Talisman – Crafted'},
-      {id:'cl_satchel', kind:'satchel', label:'Satchel Upgrades Completed'}
+      {id:'cl_satchel', kind:'satchel', label:'Satchel Upgrades Completed'},
+      {id:'cl_legendary_buck', kind:'collectible', label:'Legendary Buck – Hunted', regionId:'west_elizabeth'},
+      {id:'cl_card_sets', kind:'collectible', label:'Cigarette Cards – Any Set Completed'},
+      {id:'cl_dinosaur_bones', kind:'collectible', label:'Dinosaur Bones – 5 Found'},
+      {id:'cl_rock_carvings', kind:'collectible', label:'Rock Carvings – 5 Found'},
+      {id:'cl_dreamcatchers', kind:'collectible', label:'Dreamcatchers – 10 Found'}
+    ];
+
+    const vendors = [
+      {id:'trapper_stdenis', type:'Trapper', name:'Trapper — Saint Denis', regionId:'lemoyne', near:'Docks market', lat:0, lng:0},
+      {id:'trapper_bigvalley', type:'Trapper', name:'Trapper — Big Valley', regionId:'west_elizabeth', near:'NW of Riggs', lat:0, lng:0},
+      {id:'trapper_talltrees', type:'Trapper', name:'Trapper — Tall Trees', regionId:'west_elizabeth', near:'Manzanita Post', lat:0, lng:0},
+      {id:'fence_stdenis', type:'Fence', name:'Fence — Saint Denis', regionId:'lemoyne', near:'Rue de la Commerce', lat:0, lng:0},
+      {id:'fence_emerald', type:'Fence', name:'Fence — Emerald Ranch', regionId:'new_hanover', near:'South of Saloon', lat:0, lng:0},
+      {id:'fence_vanhorne', type:'Fence', name:'Fence — Van Horn', regionId:'new_hanover', near:'Main street', lat:0, lng:0},
+      {id:'pearson_camp', type:'Pearson', name:'Pearson — Camp', regionId:'new_hanover', near:'Camp crafting', lat:0, lng:0}
     ];
 
     const inventory = { pelts:[], materials:[] };
-
     const events = [];
-    const settings = { spoilers:false, preferredUnits:'imperial', showMap:false };
-    const profile = { ownerName:'Alley', cats:['Mittens','Pumpkin'], theme:'green' };
-    const pins = { animals:[], recipes:[] };
+    const settings = { spoilers:false, preferredUnits:'imperial', showMap:true };
+    const profile  = { ownerName:'Alley', cats:['Mittens','Pumpkin'], theme:'green' };
+    const pins     = { animals:[], recipes:[], challenges:[] };
 
-    return { regions, vendors, animals, huntRules, legendary, recipes, challenges, checklist, inventory, events, settings, profile, pins };
+    return { regions, animals, huntRules, recipes, challenges, checklist, vendors, inventory, events, settings, profile, pins };
   }
 
+  // ===== Utils =====
   const qs = s=>document.querySelector(s);
   const qsa = s=>Array.from(document.querySelectorAll(s));
   const vibrate = ms=> (navigator.vibrate? navigator.vibrate(ms): false);
+  const title = s=> s.replace(/\\b\\w/g, m=>m.toUpperCase());
   function percent(n,d){ return d? Math.round((n/d)*100):0; }
+  function pushUndo(){ undoStack.push(JSON.stringify(db)); if(undoStack.length>20) undoStack.shift(); }
+  function undo(){ if(!undoStack.length) return alert('Nothing to undo'); db = JSON.parse(undoStack.pop()); save(); }
 
-  // ======== Rendering ========
-  function renderTabs() {
+  // ===== Rendering =====
+  function renderTabs(){
     qsa('.tab').forEach(t=>{
       t.onclick = () => {
         qsa('.tab').forEach(x=>x.classList.remove('active'));
         t.classList.add('active');
         qsa('main section').forEach(sec=>sec.classList.add('hide'));
         qs('#'+t.dataset.tab).classList.remove('hide');
+        if(t.dataset.tab==='maptab') drawMap();
       };
     });
   }
 
-  function renderHome() {
+  function renderHome(){
     qs('#ownerNameInline').textContent = db.profile.ownerName || 'Alley';
-
-    // KPIs
-    const perfectCount = db.inventory.pelts.filter(p=>p.quality===3).reduce((a,b)=>a+b.qty,0);
+    const perfect = db.inventory.pelts.filter(p=>p.quality===3).reduce((a,b)=>a+b.qty,0);
     const crafted = db.events.filter(e=>e.type==='craft').length;
     const done = db.checklist.filter(x=>x.done).length;
-    qs('#kPelts').textContent = perfectCount;
+    qs('#kPelts').textContent = perfect;
     qs('#kCraft').textContent = crafted;
     qs('#kCheck').textContent = done;
+    const pinCount = db.pins.animals.length + db.pins.recipes.length + db.pins.challenges.length;
+    qs('#kPins').textContent = pinCount;
     const pct = percent(done, db.checklist.length);
-    const ring = qs('#pctComplete');
-    ring.style.setProperty('--p', pct+'%');
-    ring.textContent = pct+'%';
-
-    // Pinned chips
+    const ring = qs('#pctComplete'); ring.style.setProperty('--p', pct+'%'); ring.textContent = pct+'%';
     const chips = qs('#pinnedChips'); chips.innerHTML='';
-    db.pins.animals.forEach(id=> chips.appendChild(chipFor(getAnimal(id)?.name||id, ()=>unpin('animal',id))));
-    db.pins.recipes.forEach(id=> chips.appendChild(chipFor(getRecipe(id)?.name||id, ()=>unpin('recipe',id))));
+    db.pins.animals.forEach(id=> chips.appendChild(chip(getAnimal(id)?.name||id, ()=>unpin('animal',id))));
+    db.pins.recipes.forEach(id=> chips.appendChild(chip(getRecipe(id)?.name||id, ()=>unpin('recipe',id))));
+    db.pins.challenges.forEach(id=> chips.appendChild(chip(getChallenge(id)?.category+' T'+getChallenge(id)?.tier, ()=>unpin('challenge',id))));
 
-    // Suggestions
     const craftable = computeCraftable();
     const top = [...craftable.filter(c=>c.missing.length===0), ...craftable].slice(0,3);
-    const box = qs('#homeSuggestions');
-    box.innerHTML = '';
-    top.forEach(c => box.appendChild(renderSuggestion(c)));
+    const box = qs('#homeSuggestions'); box.innerHTML='';
+    top.forEach(c=> box.appendChild(suggestionCard(c)));
   }
 
-  function chipFor(label, onx){
-    const d=document.createElement('button'); d.className='chip'; d.innerHTML=label+' ✕'; d.onclick=()=>{onx();}; return d;
+  // Components
+  const chip = (label, onx)=>{ const b=document.createElement('button'); b.className='chip'; b.textContent=label+' ✕'; b.onclick=onx; return b; };
+  function suggestionCard(c){
+    const d=document.createElement('div'); d.className='item';
+    d.innerHTML = \`
+      <div class="hdr">
+        <div>
+          <div class="title">\${c.recipe.name}</div>
+          <div class="sub">Craft at \${c.recipe.vendorType||c.recipe.station} • Missing: \${c.missing.map(m=>m.item+'('+m.qty+')').join(', ')||'None'}</div>
+        </div>
+        <div class="row">
+          <button class="small" data-pin-recipe="\${c.recipe.id}">Pin</button>
+          <button class="small" data-craft-id="\${c.recipe.id}">Craft</button>
+        </div>
+      </div>\`;
+    d.querySelector('[data-craft-id]').onclick=()=>craft(c.recipe.id);
+    d.querySelector('[data-pin-recipe]').onclick=()=>pin('recipe', c.recipe.id);
+    return d;
   }
 
   function renderFilters(){
-    const sel = qs('#fltRegion');
-    sel.innerHTML = '<option value="">All Regions</option>' + db.regions.map(r=>`<option value="${r.id}">${r.name}</option>`).join('');
+    const sel = qs('#fltRegion'); const msel = qs('#mapFRegion');
+    const opts = '<option value="">All Regions</option>' + db.regions.map(r=>\`<option value="\${r.id}">\${r.name}</option>\`).join('');
+    sel.innerHTML = opts; msel.innerHTML = '<option value="">Any</option>' + db.regions.map(r=>\`<option value="\${r.id}">\${r.name}</option>\`).join('');
   }
 
   function renderAnimals(){
     const q = (qs('#qHunt').value||'').toLowerCase();
     const r = qs('#fltRegion').value || '';
     const t = qs('#fltTime').value || '';
-    const list = qs('#listAnimals'); list.innerHTML = '';
+    const list = qs('#listAnimals'); list.innerHTML='';
     db.animals
       .filter(a=>!q || a.name.toLowerCase().includes(q) || a.family.toLowerCase().includes(q))
       .filter(a=>!r || a.regionIds.includes(r))
       .filter(a=>!t || (a.activeTimes||[]).includes(t))
-      .forEach(a=> list.appendChild(renderAnimal(a)) );
+      .sort((a,b)=> a.name.localeCompare(b.name))
+      .forEach(a=> list.appendChild(animalCard(a)) );
   }
 
-  function renderAnimal(a){
+  function animalCard(a){
     const rule = db.huntRules.find(h=>h.animalId===a.id);
-    const div = document.createElement('div'); div.className='item';
-    const regs = a.regionIds.map(id=> db.regions.find(r=>r.id===id)?.name).join(', ');
-    div.innerHTML = `
+    const div=document.createElement('div'); div.className='item';
+    const regs = a.regionIds.map(id=> getRegion(id)?.name).join(', ');
+    div.innerHTML = \`
       <div class="hdr">
         <div>
-          <div class="title">${a.name}</div>
-          <div class="sub">Family: ${a.family} • Regions: ${regs}</div>
+          <div class="title">\${a.name}</div>
+          <div class="sub">Family: \${a.family} • Regions: \${regs}</div>
         </div>
         <div class="row" style="gap:6px">
-          <button class="small" data-pin="${a.id}">Pin</button>
-          <span class="tag">Perfect Pelt</span>
+          <button class="small" data-pin="\${a.id}">Pin</button>
+          <button class="small" data-log="\${a.id}">Log ★★★</button>
         </div>
       </div>
-      <div class="sub" style="margin-top:6px">${a.habitatNotes}</div>
+      <div class="sub" style="margin-top:6px">\${a.habitatNotes}</div>
       <div class="row" style="margin-top:8px; gap:6px">
-        <div class="badge">Weapon: ${rule?.weapon||'—'}</div>
-        <div class="badge">Ammo: ${rule?.ammo||'—'}</div>
-        <div class="badge">Shots: ${rule?.shots||'—'}</div>
-      </div>
-      <div class="row right" style="margin-top:8px">
-        <button class="primary small" data-log="${a.id}">Log Perfect</button>
-      </div>
-    `;
-    div.querySelector('[data-log]')?.addEventListener('click', ()=> logKillById(a.id,3));
-    div.querySelector('[data-pin]')?.addEventListener('click', ()=> pin('animal', a.id));
+        <div class="badge">Weapon: \${rule?.weapon||'—'}</div>
+        <div class="badge">Ammo: \${rule?.ammo||'—'}</div>
+        <div class="badge">Shots: \${rule?.shots||'—'}</div>
+      </div>\`;
+    div.querySelector('[data-pin]').onclick=()=>pin('animal', a.id);
+    div.querySelector('[data-log]').onclick=()=>logKillById(a.id,3);
     return div;
   }
 
   function renderRecipes(){
-    const listAll = qs('#listRecipes');
-    const listNow = qs('#listCraftable');
+    const listAll = qs('#listRecipes'); const listNow = qs('#listCraftable');
     listAll.innerHTML=''; listNow.innerHTML='';
     const craftable = computeCraftable();
-    craftable.forEach(c=> listNow.appendChild(renderRecipe(c.recipe, c.missing)) );
-    db.recipes.forEach(r=> listAll.appendChild(renderRecipe(r)) );
+    craftable.forEach(c=> listNow.appendChild(recipeCard(c.recipe, c.missing)) );
+    db.recipes.sort((a,b)=> a.name.localeCompare(b.name)).forEach(r=> listAll.appendChild(recipeCard(r)) );
   }
 
-  function renderRecipe(r, missing){
-    const div=document.createElement('div');
-    div.className='item';
-    const miss = missing && missing.length? ` • Missing: ${missing.map(m=>m.item+`(${m.qty})`).join(', ')}`:'';
-    div.innerHTML = `
+  function recipeCard(r, missing){
+    const d=document.createElement('div'); d.className='item';
+    const miss = missing && missing.length? ' • Missing: '+missing.map(m=>m.item+'('+m.qty+')').join(', '):'';
+    d.innerHTML = \`
       <div class="hdr">
         <div>
-          <div class="title">${r.name}</div>
-          <div class="sub">${r.station}${r.vendorType?` • ${r.vendorType}`:''}${miss}</div>
+          <div class="title">\${r.name}</div>
+          <div class="sub">\${r.station}\${r.vendorType? ' • '+r.vendorType:''}\${miss}</div>
         </div>
         <div class="row" style="gap:6px">
-          <button class="small" data-pin-recipe="${r.id}">Pin</button>
-          <button class="small" data-craft-id="${r.id}">Craft</button>
+          <button class="small" data-pin-recipe="\${r.id}">Pin</button>
+          <button class="small" data-craft-id="\${r.id}">Craft</button>
         </div>
       </div>
-      <div class="sub" style="margin-top:6px">Inputs: ${r.inputs.map(i=>`${i.item}×${i.qty}`).join(', ')} • Outputs: ${r.outputs.map(o=>`${o.item}×${o.qty}`).join(', ')}</div>
-    `;
-    div.querySelector('[data-craft-id]').onclick = ()=> craft(r.id);
-    div.querySelector('[data-pin-recipe]').onclick = ()=> pin('recipe', r.id);
-    return div;
+      <div class="sub" style="margin-top:6px">Inputs: \${r.inputs.map(i=>\`\${i.item}×\${i.qty}\`).join(', ')} • Outputs: \${r.outputs.map(o=>\`\${o.item}×\${o.qty}\`).join(', ')}</div>\`;
+    d.querySelector('[data-pin-recipe]').onclick=()=>pin('recipe', r.id);
+    d.querySelector('[data-craft-id]').onclick=()=>craft(r.id);
+    return d;
   }
 
   function renderChallenges(){
     const list = qs('#listChallenges'); list.innerHTML='';
     db.challenges.forEach(c=>{
-      const div = document.createElement('div'); div.className='item';
+      const d=document.createElement('div'); d.className='item';
       const done = c.done? '✅ Completed':'⭕ Not done';
-      div.innerHTML = `
+      const pinned = db.pins.challenges.includes(c.id);
+      d.innerHTML = \`
         <div class="hdr">
           <div>
-            <div class="title">${c.category} – Tier ${c.tier}</div>
-            <div class="sub">${c.description}</div>
+            <div class="title">\${c.category} — Tier \${c.tier}</div>
+            <div class="sub">\${c.description}</div>
           </div>
-          <button class="small" data-chal="${c.id}">${done}</button>
-        </div>`;
-      div.querySelector('button').onclick = ()=>{ c.done=!c.done; vibrate(20); save(); };
-      list.appendChild(div);
+          <div class="row">
+            <button class="small" data-pin="\${c.id}">\${pinned?'Unpin':'Pin'}</button>
+            <button class="small" data-tgl="\${c.id}">\${done}</button>
+          </div>
+        </div>\`;
+      d.querySelector('[data-pin]').onclick=()=>{ togglePin('challenge', c.id); };
+      d.querySelector('[data-tgl]').onclick=()=>{ c.done=!c.done; pushUndo(); save(); };
+      list.appendChild(d);
     });
   }
 
   function renderChecklist(){
     const list = qs('#listChecklist'); list.innerHTML='';
     db.checklist.forEach(c=>{
-      const div = document.createElement('div'); div.className='item';
-      div.innerHTML = `
+      const d=document.createElement('div'); d.className='item';
+      d.innerHTML = \`
         <div class="hdr">
-          <div class="title">${c.label}</div>
-          <button class="small" data-cl="${c.id}">${c.done?'✅ Done':'Mark Done'}</button>
-        </div>`;
-      div.querySelector('button').onclick = ()=>{ c.done=!c.done; vibrate(20); save(); };
-      list.appendChild(div);
+          <div class="title">\${c.label}</div>
+          <button class="small" data-id="\${c.id}">\${c.done?'✅ Done':'Mark Done'}</button>
+        </div>\`;
+      d.querySelector('button').onclick=()=>{ c.done=!c.done; pushUndo(); save(); };
+      list.appendChild(d);
     });
   }
 
@@ -459,44 +586,51 @@
     document.documentElement.setAttribute('data-theme', db.profile.theme || 'green');
 
     const pins = qs('#pins'); pins.innerHTML='';
-    db.pins.animals.forEach(id=> pins.appendChild(chipFor(getAnimal(id)?.name||id, ()=>unpin('animal',id))));
-    db.pins.recipes.forEach(id=> pins.appendChild(chipFor(getRecipe(id)?.name||id, ()=>unpin('recipe',id))));
+    db.pins.animals.forEach(id=> pins.appendChild(chip(getAnimal(id)?.name||id, ()=>unpin('animal',id))));
+    db.pins.recipes.forEach(id=> pins.appendChild(chip(getRecipe(id)?.name||id, ()=>unpin('recipe',id))));
+    db.pins.challenges.forEach(id=> pins.appendChild(chip('Challenge: '+(getChallenge(id)?.category||'')+' T'+(getChallenge(id)?.tier||''), ()=>unpin('challenge',id))));
   }
 
   function renderAll(){
     renderHome(); renderFilters(); renderAnimals(); renderRecipes(); renderChallenges(); renderChecklist(); renderProfile();
+    if(db.settings.showMap) drawMap();
   }
 
-  // ======== Core logic ========
-  function getAnimal(id){ return db.animals.find(a=>a.id===id); }
-  function getRecipe(id){ return db.recipes.find(r=>r.id===id); }
+  // ===== Getters =====
+  const getRegion = id => db.regions.find(r=>r.id===id);
+  const getAnimal = id => db.animals.find(a=>a.id===id);
+  const getRecipe = id => db.recipes.find(r=>r.id===id);
+  const getChallenge = id => db.challenges.find(c=>c.id===id);
 
+  // ===== Core actions =====
   function logKillById(animalId, quality){
     const a = getAnimal(animalId); if(!a) return alert('Animal not found');
     const pelts = db.inventory.pelts;
     const row = pelts.find(p=>p.animalId===animalId && p.quality===quality);
+    pushUndo();
     if(row) row.qty += 1; else pelts.push({animalId, quality, qty:1});
     db.events.push({id:crypto.randomUUID(), type:'kill', at:Date.now(), payload:{animalId, quality}});
     vibrate(20); save();
   }
-
   function logKillByName(name, quality){
     const a = db.animals.find(x=>x.name.toLowerCase()===name.toLowerCase());
     if(!a) return alert('No exact match for '+name);
     logKillById(a.id, quality);
   }
+  function pin(kind, id){ const s = db.pins[kind+'s']; if(!s.includes(id)) s.push(id); pushUndo(); save(); }
+  function togglePin(kind, id){ const s = db.pins[kind+'s']; const i=s.indexOf(id); if(i>-1) s.splice(i,1); else s.push(id); pushUndo(); save(); }
+  function unpin(kind, id){ const s = db.pins[kind+'s']; const i=s.indexOf(id); if(i>-1) s.splice(i,1); pushUndo(); save(); }
 
   function computeCraftable(){
     const have = new Map();
     db.inventory.pelts.forEach(p=>{
       const a = getAnimal(p.animalId)?.name || p.animalId;
-      const label = (p.quality===3? 'Perfect ':'') + (a.includes('Pelt')? a : `${a.includes('Hide')?a:a+' Pelt'}`);
+      const label = (p.quality===3? 'Perfect ':'') + (a.includes('Pelt')? a : (a+' Pelt'));
       have.set(label, (have.get(label)||0)+p.qty);
     });
     db.inventory.materials.forEach(m=> have.set(m.item, (have.get(m.item)||0)+m.qty));
     return db.recipes.map(r=>{
-      const missing = r.inputs.map(i=>({item:i.item, qty: Math.max(0, i.qty - (have.get(i.item)||0))}))
-                              .filter(m=>m.qty>0);
+      const missing = r.inputs.map(i=>({item:i.item, qty: Math.max(0, i.qty - (have.get(i.item)||0))})).filter(m=>m.qty>0);
       return { recipe:r, missing };
     }).sort((a,b)=> a.missing.length - b.missing.length);
   }
@@ -504,15 +638,14 @@
   function craft(recipeId){
     const rec = getRecipe(recipeId); if(!rec) return;
     const craftable = computeCraftable().find(c=>c.recipe.id===recipeId);
-    if(craftable.missing.length){ alert('Missing: '+craftable.missing.map(m=>m.item+`(${m.qty})`).join(', ')); return; }
-    // consume inputs
+    if(craftable.missing.length){ return alert('Missing: '+craftable.missing.map(m=>m.item+'('+m.qty+')').join(', ')); }
+    pushUndo();
     rec.inputs.forEach(i=>{
       let remaining = i.qty;
-      const nameFromPelt = (p)=>{
-        const an = getAnimal(p.animalId)?.name || ''; return (p.quality===3? 'Perfect '+an+' Pelt' : an+' Pelt');
-      };
       for(const p of [...db.inventory.pelts]){
-        if(nameFromPelt(p)===i.item && remaining>0){
+        const an = getAnimal(p.animalId)?.name || '';
+        const label = (p.quality===3? 'Perfect '+an+' Pelt' : an+' Pelt');
+        if(label===i.item && remaining>0){
           const take = Math.min(p.qty, remaining); p.qty -= take; remaining -= take; if(p.qty<=0) db.inventory.pelts = db.inventory.pelts.filter(x=>x!==p);
         }
       }
@@ -529,62 +662,95 @@
     vibrate(30); save(); alert('Crafted: '+rec.name);
   }
 
-  function pin(kind, id){
-    const set = (kind==='animal')? db.pins.animals : db.pins.recipes;
-    if(!set.includes(id)) set.push(id);
-    save();
+  // ===== Map (SVG schematic) =====
+  const regionPos = {
+    ambarino:{x:120,y:60,w:140,h:80,label:'Ambarino'},
+    new_hanover:{x:180,y:170,w:160,h:90,label:'New Hanover'},
+    west_elizabeth:{x:60,y:160,w:110,h:100,label:'West Elizabeth'},
+    lemoyne:{x:230,y:280,w:140,h:70,label:'Lemoyne'},
+    new_austin:{x:60,y:280,w:150,h:80,label:'New Austin'}
+  };
+  function drawMap(){
+    const Q = (qs('#mapQ').value||'').toLowerCase();
+    const R = qs('#mapFRegion').value||'';
+    const T = qs('#mapFTime').value||'';
+    const map = qs('#map'); map.innerHTML='';
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS,'svg'); svg.setAttribute('viewBox','0 0 420 370'); svg.setAttribute('width','100%'); svg.setAttribute('height','100%');
+    // Regions
+    Object.entries(regionPos).forEach(([id,box])=>{
+      const g=document.createElementNS(svgNS,'g');
+      const r=document.createElementNS(svgNS,'rect'); r.setAttribute('x',box.x); r.setAttribute('y',box.y);
+      r.setAttribute('rx',12); r.setAttribute('ry',12);
+      r.setAttribute('width',box.w); r.setAttribute('height',box.h);
+      r.setAttribute('fill','#0f1b33'); r.setAttribute('stroke','#1c2b4b'); r.setAttribute('stroke-width','1.5');
+      const t=document.createElementNS(svgNS,'text'); t.setAttribute('x',box.x+8); t.setAttribute('y',box.y+14); t.textContent=box.label;
+      g.appendChild(r); g.appendChild(t); svg.appendChild(g);
+    });
+    // Animals markers (center of first region this animal appears)
+    db.animals.forEach(a=>{
+      const rid = a.regionIds[0]; const b = regionPos[rid]; if(!b) return;
+      if(R && !a.regionIds.includes(R)) return;
+      if(T && !(a.activeTimes||[]).includes(T)) return;
+      if(Q && !a.name.toLowerCase().includes(Q) && !a.family.toLowerCase().includes(Q)) return;
+      const cx=b.x + b.w/2 + ((a.name.charCodeAt(0)%17)-8); // slight spread
+      const cy=b.y + b.h/2 + ((a.name.charCodeAt(1)%17)-8);
+      const dot=document.createElementNS(svgNS,'circle'); dot.setAttribute('cx',cx); dot.setAttribute('cy',cy); dot.setAttribute('r',6); dot.setAttribute('class','dot');
+      dot.onclick=()=> showAnimalPopup(a);
+      svg.appendChild(dot);
+    });
+    map.appendChild(svg);
+
+    // List under map
+    const list = qs('#mapList'); list.innerHTML='';
+    db.animals
+      .filter(a=>!R || a.regionIds.includes(R))
+      .filter(a=>!T || (a.activeTimes||[]).includes(T))
+      .filter(a=>!Q || a.name.toLowerCase().includes(Q) || a.family.toLowerCase().includes(Q))
+      .slice(0,30)
+      .forEach(a=> list.appendChild(animalCard(a)));
   }
-  function unpin(kind, id){
-    const set = (kind==='animal')? db.pins.animals : db.pins.recipes;
-    const i = set.indexOf(id); if(i>-1) set.splice(i,1); save();
+  function showAnimalPopup(a){
+    const rule = db.huntRules.find(h=>h.animalId===a.id);
+    alert(\`\${a.name}\\nRegion(s): \${a.regionIds.map(id=>getRegion(id)?.name).join(', ')}\\nTime: \${(a.activeTimes||[]).join('/')}\\nPerfect: \${rule?.weapon||'—'} • \${rule?.ammo||'—'} • \${rule?.shots||'—'}\`);
   }
 
-  function detailForRecipe(r){
-    const v = r.vendorType? (' at '+r.vendorType) : '';
-    return `${r.name}${v}
-Inputs: ${r.inputs.map(i=>`${i.item}×${i.qty}`).join(', ')}
-Outputs: ${r.outputs.map(o=>`${o.item}×${o.qty}`).join(', ')}`;
-  }
-
-  // ======== Export/Import/Share ========
+  // ===== Export / Import / Share / Reset / Undo =====
   qs('#btnExport').onclick = ()=>{
     const payload = JSON.stringify(db, null, 2);
     const blob = new Blob([payload], {type:'application/json'});
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'rdr2-companion-backup.json'; a.click();
+    const a = document.createElement('a'); a.href=url; a.download='rdr2-companion-backup.json'; a.click();
     setTimeout(()=> URL.revokeObjectURL(url), 1000);
   };
-
   qs('#btnImport').onclick = ()=>{
-    const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'application/json';
-    inp.onchange = e => { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = () => { try { const j = JSON.parse(r.result); Object.assign(db, j); save(); } catch(err){ alert('Invalid file'); } }; r.readAsText(f); };
+    const inp=document.createElement('input'); inp.type='file'; inp.accept='application/json';
+    inp.onchange=e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ try{ pushUndo(); db=JSON.parse(r.result); save(); }catch(err){ alert('Invalid file'); } }; r.readAsText(f); };
     inp.click();
   };
-
   qs('#btnShare').onclick = async()=>{
-    const url = location.href; const text = `RDR2 Companion for ${db.profile.ownerName}: ${url}`;
+    const url = location.href; const text = \`RDR2 Companion for \${db.profile.ownerName}: \${url}\`;
     if(navigator.share){ try{ await navigator.share({title:'RDR2 Companion', text, url}); }catch(e){} }
     else { navigator.clipboard?.writeText(url); alert('Link copied to clipboard'); }
   };
+  qs('#btnReset').onclick = ()=>{ if(confirm('Reset all data?')){ pushUndo(); db = seed(); save(); } };
+  qs('#btnUndo').onclick = ()=> undo();
 
-  // ======== Events ========
+  // ===== Events =====
   qs('#btnLogKill').onclick = ()=>{
-    const name = qs('#logAnimal').value.trim();
-    const q = parseInt(qs('#logQuality').value,10);
-    if(!name) return alert('Enter an animal name');
-    logKillByName(name, q); qs('#logAnimal').value = '';
+    const name = qs('#logAnimal').value.trim(); const q = parseInt(qs('#logQuality').value,10);
+    if(!name) return alert('Enter an animal name'); logKillByName(name, q); qs('#logAnimal').value='';
   };
   qs('#btnQuickMat').onclick = ()=>{
-    const item = prompt('Material name (e.g., Silver Chain Bracelet)'); if(!item) return;
+    const item = prompt('Material (e.g., Silver Chain Bracelet)'); if(!item) return;
     const qty = parseInt(prompt('Quantity'),10)||1;
-    const row = db.inventory.materials.find(m=>m.item===item); if(row) row.qty+=qty; else db.inventory.materials.push({item, qty});
-    save();
+    pushUndo(); const row = db.inventory.materials.find(m=>m.item===item); if(row) row.qty+=qty; else db.inventory.materials.push({item, qty}); save();
   };
-
   qs('#qHunt').addEventListener('input', renderAnimals);
   qs('#fltRegion').addEventListener('change', renderAnimals);
   qs('#fltTime').addEventListener('change', renderAnimals);
+  ['mapQ','mapFRegion','mapFTime'].forEach(id=> qs('#'+id).addEventListener('input', drawMap));
+  ['mapFRegion','mapFTime'].forEach(id=> qs('#'+id).addEventListener('change', drawMap));
 
   // Profile save
   qs('#saveProfile').onclick = ()=>{
@@ -593,23 +759,16 @@ Outputs: ${r.outputs.map(o=>`${o.item}×${o.qty}`).join(', ')}`;
     db.profile.theme = qs('#theme').value || 'green';
     db.settings.spoilers = qs('#spoilers').checked;
     document.documentElement.setAttribute('data-theme', db.profile.theme);
-    vibrate(30); save();
+    pushUndo(); save();
   };
+  qs('#clearPins').onclick = ()=>{ pushUndo(); db.pins.animals=[]; db.pins.recipes=[]; db.pins.challenges=[]; save(); };
 
-  // Clear pins
-  qs('#clearPins').onclick = ()=>{ db.pins.animals=[]; db.pins.recipes=[]; save(); };
+  // Install hint
+  (function(){ const hint=qs('#installHint'); const iOS=/iphone|ipad|ipod/i.test(navigator.userAgent); if(iOS) hint.textContent='Share → Add to Home Screen'; })();
 
-  // Install hint visibility
-  (function(){
-    const hint = qs('#installHint');
-    const iOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    if(iOS) hint.textContent = 'Share → Add to Home Screen';
-  })();
-
-  // Boot
+  // ===== Boot =====
   document.documentElement.setAttribute('data-theme', db.profile?.theme || 'green');
-  renderTabs();
-  renderAll();
+  renderTabs(); renderAll();
   </script>
 </body>
 </html>
