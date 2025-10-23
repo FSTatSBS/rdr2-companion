@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>RDR2 Companion – Hunt • Craft • Complete</title>
+  <meta name="description" content="Mobile-first Red Dead Redemption 2 companion for hunting, crafting, and completion tracking. Offline-first using localStorage. Export/Import JSON for backup." />
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --panel: #111827;
+      --muted: #a3b1c6;
+      --text: #e6eefc;
+      --accent: #30a46c;
+      --accent-2: #7c3aed;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --ok: #22c55e;
+      --card: #0f172a;
+      --border: #203047;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    header { position: sticky; top: 0; z-index: 5; backdrop-filter: saturate(150%) blur(6px); background: rgba(11,15,20,0.85); border-bottom: 1px solid var(--border); }
+    header .bar { display: flex; gap: 8px; align-items: center; padding: env(safe-area-inset-top) 12px 12px 12px; }
+    h1 { font-size: 18px; margin: 0; letter-spacing: 0.3px; }
+    .pill { padding: 6px 10px; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); font-size: 12px; }
+    .tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 6px 12px 10px; }
+    .tab { padding: 8px 10px; text-align: center; border-radius: 12px; background: var(--panel); color: var(--muted); border: 1px solid var(--border); font-size: 12px; }
+    .tab.active { background: linear-gradient(180deg, #1a2336, #0f172a); color: white; border-color: #2a3f66; }
+    main { padding: 10px 12px 80px; }
+    .grid { display: grid; gap: 10px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 12px; }
+    .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .row.right { justify-content: flex-end; }
+    .title { font-weight: 700; font-size: 15px; }
+    .sub { font-size: 12px; color: var(--muted); }
+    .kpi { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .k { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align:center; }
+    .k .v { font-size: 18px; font-weight: 800; }
+    .k .l { font-size: 11px; color: var(--muted); }
+    input, select, button, textarea { font: inherit; color: inherit; }
+    button { background: var(--panel); border: 1px solid var(--border); padding: 10px 12px; border-radius: 12px; cursor: pointer; }
+    button.primary { background: linear-gradient(180deg, #1f7a52, #16623f); border-color: #1f7a52; color: white; }
+    button.ghost { background: transparent; border-color: var(--border); }
+    button.warn { background: #3a1e11; border-color: #6b2f14; color: #ffb86b; }
+    .list { display: grid; gap: 8px; }
+    .item { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 10px; }
+    .item .hdr { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .badge { font-size: 11px; padding: 4px 8px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
+    .tag { font-size: 11px; padding: 4px 8px; border-radius: 999px; background: #0d2231; border: 1px solid #1d3650; }
+    .muted { color: var(--muted); }
+    .fab { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 10; }
+    .srch { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+    .srch input, .srch select { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 10px; }
+    .foot { position: fixed; bottom: 0; left: 0; right: 0; backdrop-filter: saturate(150%) blur(6px); background: rgba(11,15,20,0.9); border-top: 1px solid var(--border); padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+    .foot button { border-radius: 12px; padding: 10px; }
+    .small { font-size: 12px; }
+    .hide { display: none !important; }
+    .progress-ring { width: 80px; height: 80px; border-radius: 50%; background: conic-gradient(var(--accent) var(--p,0%), #22324a 0%); display: grid; place-items: center; font-weight: 800; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="bar">
+      <div class="pill">RDR2 Companion</div>
+      <h1>Hunt • Craft • Complete</h1>
+      <div style="flex:1"></div>
+      <button id="btnExport" title="Export your data">Export</button>
+      <button id="btnImport" title="Import saved data">Import</button>
+    </div>
+    <div class="tabs">
+      <div class="tab active" data-tab="home">Home</div>
+      <div class="tab" data-tab="hunt">Hunt</div>
+      <div class="tab" data-tab="craft">Craft</div>
+      <div class="tab" data-tab="challenges">Challenges</div>
+      <div class="tab" data-tab="complete">100%</div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HOME -->
+    <section id="home" class="grid">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <div>
+            <div class="title">Tonight's Targets</div>
+            <div class="sub">Top suggestions based on inventory & vendors nearby</div>
+          </div>
+          <div class="progress-ring" id="pctComplete">0%</div>
+        </div>
+        <div id="homeSuggestions" class="list" style="margin-top:8px"></div>
+      </div>
+
+      <div class="card kpi">
+        <div class="k"><div class="v" id="kPelts">0</div><div class="l">Perfect Pelts</div></div>
+        <div class="k"><div class="v" id="kCraft">0</div><div class="l">Crafted Items</div></div>
+        <div class="k"><div class="v" id="kCheck">0</div><div class="l">Checklist Done</div></div>
+      </div>
+
+      <div class="card">
+        <div class="row"><div class="title">Quick Log</div></div>
+        <div class="srch" style="margin-top:8px">
+          <input id="logAnimal" placeholder="Animal name (e.g., Whitetail Buck)" />
+          <select id="logQuality">
+            <option value="3">Perfect ★★★</option>
+            <option value="2">Good ★★</option>
+            <option value="1">Poor ★</option>
+          </select>
+        </div>
+        <div class="row right" style="margin-top:8px">
+          <button class="primary" id="btnLogKill">Log Kill</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- HUNT -->
+    <section id="hunt" class="grid hide">
+      <div class="card">
+        <div class="row"><div class="title">Find Animals</div></div>
+        <div class="srch" style="margin-top:8px">
+          <input id="qHunt" placeholder="Search animal or family (e.g., pronghorn, deer)" />
+          <select id="fltRegion"></select>
+        </div>
+      </div>
+      <div id="listAnimals" class="list"></div>
+    </section>
+
+    <!-- CRAFT -->
+    <section id="craft" class="grid hide">
+      <div class="card">
+        <div class="row"><div class="title">Craftable Now</div><span class="sub">Based on your inventory</span></div>
+      </div>
+      <div id="listCraftable" class="list"></div>
+      <div class="card"><div class="title">All Recipes</div></div>
+      <div id="listRecipes" class="list"></div>
+    </section>
+
+    <!-- CHALLENGES -->
+    <section id="challenges" class="grid hide">
+      <div class="card">
+        <div class="row"><div class="title">Challenges</div><span class="sub">Tap to toggle completion</span></div>
+      </div>
+      <div id="listChallenges" class="list"></div>
+    </section>
+
+    <!-- 100% -->
+    <section id="complete" class="grid hide">
+      <div class="card">
+        <div class="row"><div class="title">100% Checklist</div><span class="sub">Track major milestones</span></div>
+      </div>
+      <div id="listChecklist" class="list"></div>
+    </section>
+  </main>
+
+  <div class="foot">
+    <button class="tab active" data-tab="home">Home</button>
+    <button class="tab" data-tab="hunt">Hunt</button>
+    <button class="tab" data-tab="craft">Craft</button>
+    <button class="tab" data-tab="challenges">Challenges</button>
+    <button class="tab" data-tab="complete">100%</button>
+  </div>
+
+  <script>
+  // ======== Minimal data layer (can be expanded or replaced with import) ========
+  const DBKEY = 'rdr2_companion_v1';
+  const db = JSON.parse(localStorage.getItem(DBKEY) || 'null') || seed();
+
+  function save() { localStorage.setItem(DBKEY, JSON.stringify(db)); renderAll(); }
+
+  function seed(){
+    const regions = [
+      {id:'new_hanover', name:'New Hanover', states:['Heartlands','Grizzlies East']},
+      {id:'west_elizabeth', name:'West Elizabeth', states:['Big Valley','Tall Trees']},
+      {id:'lemoyne', name:'Lemoyne', states:['Bayou Nwa','Scarlett Meadows']},
+      {id:'ambarino', name:'Ambarino', states:['Grizzlies West','Cotorra Springs']}
+    ];
+
+    const vendors = [
+      {id:'trapper_stdenis', type:'Trapper', name:'Trapper – Saint Denis', regionId:'lemoyne', near:'Market by the docks', lat:0, lng:0},
+      {id:'trapper_bigvalley', type:'Trapper', name:'Trapper – Big Valley', regionId:'west_elizabeth', near:'NW of Riggs Station', lat:0, lng:0},
+      {id:'fence_stdenis', type:'Fence', name:'Fence – Saint Denis', regionId:'lemoyne', near:'Rue de la Commerce', lat:0, lng:0},
+      {id:'pearson_camp', type:'Pearson', name:'Pearson – Camp', regionId:'new_hanover', near:'Camp crafting', lat:0, lng:0}
+    ];
+
+    const animals = [
+      {id:'whitetail_buck', name:'Whitetail Buck', family:'deer', regionIds:['new_hanover','west_elizabeth'], habitatNotes:'Open woodlands and meadows; dawn/dusk active', activeTimes:['day','night']},
+      {id:'pronghorn', name:'Pronghorn', family:'antelope', regionIds:['new_hanover','west_elizabeth'], habitatNotes:'Heartlands plains; skittish', activeTimes:['day']},
+      {id:'american_bison', name:'American Bison', family:'bison', regionIds:['west_elizabeth'], habitatNotes:'Big Valley grasslands', activeTimes:['day']},
+      {id:'rabbit', name:'Black-tailed Jackrabbit', family:'small_game', regionIds:['lemoyne','new_hanover','west_elizabeth'], habitatNotes:'Everywhere', activeTimes:['day','night']},
+      {id:'bear_grizzly', name:'Grizzly Bear', family:'bear', regionIds:['ambarino','west_elizabeth'], habitatNotes:'Grizzlies; aggressive', activeTimes:['day']}
+    ];
+
+    const huntRules = [
+      {animalId:'whitetail_buck', perfectPelt:3, weapon:'Bolt Action Rifle', ammo:'Express', shots:'1x head or heart', notes:'Use cover scent; approach from downwind'},
+      {animalId:'pronghorn', perfectPelt:3, weapon:'Varmint Rifle', ammo:'Regular', shots:'1x headshot', notes:'Keep distance; prone in grass'},
+      {animalId:'american_bison', perfectPelt:3, weapon:'Springfield/Bolt Action', ammo:'Express', shots:'1x head', notes:'Aim for brain; use Dead Eye'},
+      {animalId:'rabbit', perfectPelt:3, weapon:'Varmint Rifle', ammo:'Regular', shots:'1x head', notes:'Small game arrows also work'},
+      {animalId:'bear_grizzly', perfectPelt:3, weapon:'Bolt Action Rifle', ammo:'Express', shots:'1x head', notes:'Bring potent tonics; bait optional'}
+    ];
+
+    const legendary = [
+      {id:'legendary_bharati_bear', name:'Legendary Bharati Grizzly', regionId:'ambarino', clueCount:3, peltOutputs:['Legendary Bear Pelt'], trinkets:['Bear Claw Talisman'], time:['day'], weather:['clear']}
+    ];
+
+    const recipes = [
+      {id:'trapper_bear_hat', name:'Grizzly Mountain Hat', station:'Trapper', vendorType:'Trapper', inputs:[{item:'Legendary Bear Pelt', qty:1}], outputs:[{item:'Grizzly Mountain Hat', qty:1}], notes:'Craft at any Trapper'},
+      {id:'pearson_satchel_kit', name:'Arthur Full Satchel Kit', station:'Camp', vendorType:'Pearson', inputs:[{item:'Perfect Deer Pelt', qty:3},{item:'Perfect Bison Pelt', qty:1},{item:'Perfect Pronghorn Hide', qty:1}], outputs:[{item:'Legend of the East Satchel (part)', qty:1}], requires:['Upgrade Leather Working Tools']},
+      {id:'fence_trinket_bear', name:'Bear Claw Talisman', station:'Fence', vendorType:'Fence', inputs:[{item:'Legendary Bear Claw', qty:1},{item:'Silver Chain Bracelet', qty:1},{item:'Quartz Chunk', qty:1}], outputs:[{item:'Bear Claw Talisman', qty:1}], notes:'Permanent stamina core drain reduction'}
+    ];
+
+    const challenges = [
+      {id:'survivalist_1', category:'Survivalist', tier:1, description:'Catch 3 Bluegill', requirements:['3x Bluegill caught']},
+      {id:'master_hunter_1', category:'Master Hunter', tier:1, description:'Skin 3 deer', requirements:['3x Deer skinned']},
+      {id:'sharpshooter_1', category:'Sharpshooter', tier:1, description:'Kill 3 flying birds', requirements:['3x birds shot mid-flight']}
+    ];
+
+    const checklist = [
+      {id:'cl_legendary_bear', kind:'collectible', label:'Legendary Bharati Bear – Hunted', regionId:'ambarino'},
+      {id:'cl_bear_trinket', kind:'trinket', label:'Bear Claw Talisman – Crafted'},
+      {id:'cl_satchel', kind:'satchel', label:'Satchel Upgrades Completed'}
+    ];
+
+    const inventory = { pelts:[], materials:[] };
+
+    const events = [];
+    const settings = { spoilers:false, preferredUnits:'imperial', showMap:false };
+
+    return { regions, vendors, animals, huntRules, legendary, recipes, challenges, checklist, inventory, events, settings };
+  }
+
+  // ======== Helpers ========
+  const qs = s=>document.querySelector(s);
+  const qsa = s=>Array.from(document.querySelectorAll(s));
+
+  function percent(n,d){ return d? Math.round((n/d)*100):0; }
+
+  // ======== Rendering ========
+  function renderTabs() {
+    qsa('.tab').forEach(t=>{
+      t.onclick = () => {
+        qsa('.tab').forEach(x=>x.classList.remove('active'));
+        t.classList.add('active');
+        qsa('main section').forEach(sec=>sec.classList.add('hide'));
+        qs('#'+t.dataset.tab).classList.remove('hide');
+      };
+    });
+  }
+
+  function renderHome() {
+    const perfectCount = db.inventory.pelts.filter(p=>p.quality===3).reduce((a,b)=>a+b.qty,0);
+    const crafted = db.events.filter(e=>e.type==='craft').length;
+    const done = db.checklist.filter(x=>x.done).length;
+    qs('#kPelts').textContent = perfectCount;
+    qs('#kCraft').textContent = crafted;
+    qs('#kCheck').textContent = done;
+    const totalMajor = db.checklist.length;
+    const pct = percent(done, totalMajor);
+    const ring = qs('#pctComplete');
+    ring.style.setProperty('--p', pct+'%');
+    ring.textContent = pct+'%';
+
+    // Simple suggestions: top 3 craftables now
+    const craftable = computeCraftable();
+    const top = craftable.slice(0,3);
+    const box = qs('#homeSuggestions');
+    box.innerHTML = '';
+    top.forEach(c => box.appendChild(renderSuggestion(c)));
+  }
+
+  function renderSuggestion(c){
+    const div = document.createElement('div');
+    div.className = 'item';
+    const vtype = c.recipe.vendorType || c.recipe.station;
+    div.innerHTML = `
+      <div class="hdr">
+        <div>
+          <div class="title">${c.recipe.name}</div>
+          <div class="sub">Craft at <span class="badge">${vtype}</span> • Missing: ${c.missing.map(m=>m.item+`(${m.qty})`).join(', ')||'None'}</div>
+        </div>
+        <button class="primary small" data-craft="${c.recipe.id}">Details</button>
+      </div>`;
+    div.querySelector('button').onclick = ()=> alert(detailForRecipe(c.recipe));
+    return div;
+  }
+
+  function renderFilters(){
+    const sel = qs('#fltRegion');
+    sel.innerHTML = '<option value="">All Regions</option>' + db.regions.map(r=>`<option value="${r.id}">${r.name}</option>`).join('');
+  }
+
+  function renderAnimals(){
+    const q = (qs('#qHunt').value||'').toLowerCase();
+    const r = qs('#fltRegion').value || '';
+    const list = qs('#listAnimals');
+    list.innerHTML = '';
+    db.animals
+      .filter(a=>!q || a.name.toLowerCase().includes(q) || a.family.toLowerCase().includes(q))
+      .filter(a=>!r || a.regionIds.includes(r))
+      .forEach(a=> list.appendChild(renderAnimal(a)) );
+  }
+
+  function renderAnimal(a){
+    const rule = db.huntRules.find(h=>h.animalId===a.id);
+    const div = document.createElement('div');
+    div.className='item';
+    const regs = a.regionIds.map(id=> db.regions.find(r=>r.id===id)?.name).join(', ');
+    div.innerHTML = `
+      <div class="hdr">
+        <div>
+          <div class="title">${a.name}</div>
+          <div class="sub">Family: ${a.family} • Regions: ${regs}</div>
+        </div>
+        <span class="tag">Perfect Pelt</span>
+      </div>
+      <div class="sub" style="margin-top:6px">${a.habitatNotes}</div>
+      <div class="row" style="margin-top:8px; gap:6px">
+        <div class="badge">Weapon: ${rule?.weapon||'—'}</div>
+        <div class="badge">Ammo: ${rule?.ammo||'—'}</div>
+        <div class="badge">Shots: ${rule?.shots||'—'}</div>
+      </div>
+      <div class="row right" style="margin-top:8px">
+        <button class="primary small" data-log="${a.id}">Log Perfect</button>
+      </div>
+    `;
+    div.querySelector('[data-log]')?.addEventListener('click', ()=> logKillById(a.id,3));
+    return div;
+  }
+
+  function renderRecipes(){
+    const listAll = qs('#listRecipes');
+    const listNow = qs('#listCraftable');
+    listAll.innerHTML=''; listNow.innerHTML='';
+    const craftable = computeCraftable();
+    craftable.forEach(c=> listNow.appendChild(renderRecipe(c.recipe, c.missing)) );
+    db.recipes.forEach(r=> listAll.appendChild(renderRecipe(r)) );
+  }
+
+  function renderRecipe(r, missing){
+    const div=document.createElement('div');
+    div.className='item';
+    const miss = missing && missing.length? ` • Missing: ${missing.map(m=>m.item+`(${m.qty})`).join(', ')}`:'';
+    div.innerHTML = `
+      <div class="hdr">
+        <div>
+          <div class="title">${r.name}</div>
+          <div class="sub">${r.station}${r.vendorType?` • ${r.vendorType}`:''}${miss}</div>
+        </div>
+        <button class="small" data-craft-id="${r.id}">Craft</button>
+      </div>
+      <div class="sub" style="margin-top:6px">Inputs: ${r.inputs.map(i=>`${i.item}×${i.qty}`).join(', ')} • Outputs: ${r.outputs.map(o=>`${o.item}×${o.qty}`).join(', ')}</div>
+    `;
+    div.querySelector('button').onclick = ()=> craft(r.id);
+    return div;
+  }
+
+  function renderChallenges(){
+    const list = qs('#listChallenges');
+    list.innerHTML='';
+    db.challenges.forEach(c=>{
+      const div = document.createElement('div');
+      div.className='item';
+      const done = c.done? '✅ Completed':'⭕ Not done';
+      div.innerHTML = `
+        <div class="hdr">
+          <div>
+            <div class="title">${c.category} – Tier ${c.tier}</div>
+            <div class="sub">${c.description}</div>
+          </div>
+          <button class="small" data-chal="${c.id}">${done}</button>
+        </div>`;
+      div.querySelector('button').onclick = ()=>{ c.done=!c.done; save(); };
+      list.appendChild(div);
+    });
+  }
+
+  function renderChecklist(){
+    const list = qs('#listChecklist');
+    list.innerHTML='';
+    db.checklist.forEach(c=>{
+      const div = document.createElement('div');
+      div.className='item';
+      div.innerHTML = `
+        <div class="hdr">
+          <div class="title">${c.label}</div>
+          <button class="small" data-cl="${c.id}">${c.done?'✅ Done':'Mark Done'}</button>
+        </div>`;
+      div.querySelector('button').onclick = ()=>{ c.done=!c.done; save(); };
+      list.appendChild(div);
+    });
+  }
+
+  function renderAll(){
+    renderHome(); renderFilters(); renderAnimals(); renderRecipes(); renderChallenges(); renderChecklist();
+  }
+
+  // ======== Core logic ========
+  function logKillById(animalId, quality){
+    const a = db.animals.find(x=>x.id===animalId);
+    if(!a) return alert('Animal not found');
+    const pelts = db.inventory.pelts;
+    const row = pelts.find(p=>p.animalId===animalId && p.quality===quality);
+    if(row) row.qty += 1; else pelts.push({animalId, quality, qty:1});
+    db.events.push({id:crypto.randomUUID(), type:'kill', at:Date.now(), payload:{animalId, quality}});
+    save();
+  }
+
+  function logKillByName(name, quality){
+    const a = db.animals.find(x=>x.name.toLowerCase()===name.toLowerCase());
+    if(!a) return alert('No exact match for '+name);
+    logKillById(a.id, quality);
+  }
+
+  function computeCraftable(){
+    // returns [{recipe, missing:[{item, qty}]}]
+    const have = new Map();
+    db.inventory.pelts.forEach(p=>{
+      const a = db.animals.find(x=>x.id===p.animalId)?.name || p.animalId;
+      const label = (p.quality===3? 'Perfect ':'') + (a.includes('Pelt')? a : `${a.includes('Hide')?a:a+' Pelt'}`);
+      have.set(label, (have.get(label)||0)+p.qty);
+    });
+    db.inventory.materials.forEach(m=> have.set(m.item, (have.get(m.item)||0)+m.qty));
+
+    return db.recipes.map(r=>{
+      const missing = r.inputs.map(i=>({item:i.item, qty: Math.max(0, i.qty - (have.get(i.item)||0))}))
+                              .filter(m=>m.qty>0);
+      return { recipe:r, missing };
+    }).sort((a,b)=> a.missing.length - b.missing.length);
+  }
+
+  function craft(recipeId){
+    const rec = db.recipes.find(r=>r.id===recipeId); if(!rec) return;
+    const craftable = computeCraftable().find(c=>c.recipe.id===recipeId);
+    if(craftable.missing.length){ alert('Missing: '+craftable.missing.map(m=>m.item+`(${m.qty})`).join(', ')); return; }
+    // consume inputs
+    rec.inputs.forEach(i=>{
+      // try pelts then materials
+      let remaining = i.qty;
+      const fromPelts = db.inventory.pelts.find(p=> ((''+db.animals.find(a=>p.animalId===a.id)?.name+' Pelt').includes(i.item) || (p.quality===3 && ('Perfect '+db.animals.find(a=>p.animalId===a.id)?.name+' Pelt')===i.item) ));
+      if(fromPelts){
+        const take = Math.min(fromPelts.qty, remaining);
+        fromPelts.qty -= take; remaining -= take;
+        if(fromPelts.qty<=0) db.inventory.pelts = db.inventory.pelts.filter(x=>x!==fromPelts);
+      }
+      if(remaining>0){
+        const mat = db.inventory.materials.find(m=>m.item===i.item);
+        if(mat){
+          const take = Math.min(mat.qty, remaining);
+          mat.qty -= take; remaining -= take;
+          if(mat.qty<=0) db.inventory.materials = db.inventory.materials.filter(x=>x!==mat);
+        }
+      }
+    });
+    // add outputs
+    rec.outputs.forEach(o=>{
+      const row = db.inventory.materials.find(m=>m.item===o.item);
+      if(row) row.qty += o.qty; else db.inventory.materials.push({item:o.item, qty:o.qty});
+    });
+    db.events.push({id:crypto.randomUUID(), type:'craft', at:Date.now(), payload:{recipeId}});
+    save();
+    alert('Crafted: '+rec.name);
+  }
+
+  function detailForRecipe(r){
+    const v = r.vendorType? (' at '+r.vendorType) : '';
+    return `${r.name}${v}\nInputs: ${r.inputs.map(i=>`${i.item}×${i.qty}`).join(', ')}\nOutputs: ${r.outputs.map(o=>`${o.item}×${o.qty}`).join(', ')}`;
+  }
+
+  // ======== Export/Import ========
+  qs('#btnExport').onclick = ()=>{
+    const payload = JSON.stringify(db, null, 2);
+    const blob = new Blob([payload], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'rdr2-companion-backup.json'; a.click();
+    setTimeout(()=> URL.revokeObjectURL(url), 1000);
+  };
+
+  qs('#btnImport').onclick = ()=>{
+    const inp = document.createElement('input');
+    inp.type = 'file'; inp.accept = 'application/json';
+    inp.onchange = e => {
+      const f = e.target.files[0]; if(!f) return;
+      const r = new FileReader();
+      r.onload = () => { try { const j = JSON.parse(r.result); Object.assign(db, j); save(); } catch(err){ alert('Invalid file'); } };
+      r.readAsText(f);
+    };
+    inp.click();
+  };
+
+  // ======== Events ========
+  qs('#btnLogKill').onclick = ()=>{
+    const name = qs('#logAnimal').value.trim();
+    const q = parseInt(qs('#logQuality').value,10);
+    if(!name) return alert('Enter an animal name');
+    logKillByName(name, q);
+    qs('#logAnimal').value = '';
+  };
+
+  qs('#qHunt').addEventListener('input', renderAnimals);
+  qs('#fltRegion').addEventListener('change', renderAnimals);
+
+  renderTabs();
+  renderAll();
+  </script>
+</body>
+</html>
